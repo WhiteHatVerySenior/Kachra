@@ -33,7 +33,7 @@
             <span class="label">Round</span>
             <span id="round" class="value">1</span>
           </div>
-          <div class="stat">
+          <div class="stat" id="timeStat">
             <span class="label">Time</span>
             <span id="timeLeft" class="value">60</span>
           </div>
@@ -41,6 +41,10 @@
             <span class="label">High</span>
             <span id="highScore" class="value">0</span>
           </div>
+        </div>
+        <div class="history">
+          <span class="label">Recent Scores</span>
+          <ul id="historyList" class="history-list"></ul>
         </div>
       </header>
 
@@ -55,24 +59,112 @@
 
         <div class="boxes">
           <button class="box green" data-color="compost">
-            <span>COMPOST</span>
+            <span class="bin-emoji">🗑️</span>
+            <span class="bin-label">COMPOST</span>
+            <span class="bin-score">0</span>
+            <span class="fill-overlay"></span>
+            <span class="trash-stack" aria-hidden="true"></span>
+            <span class="fill-bar" aria-hidden="true"></span>
           </button>
           <button class="box blue" data-color="recycle">
-            <span>RECYCLE</span>
+            <span class="bin-emoji">🗑️</span>
+            <span class="bin-label">RECYCLE</span>
+            <span class="bin-score">0</span>
+            <span class="fill-overlay"></span>
+            <span class="trash-stack" aria-hidden="true"></span>
+            <span class="fill-bar" aria-hidden="true"></span>
           </button>
           <button class="box red" data-color="landfill">
-            <span>LANDFILL</span>
+            <span class="bin-emoji">🗑️</span>
+            <span class="bin-label">LANDFILL</span>
+            <span class="bin-score">0</span>
+            <span class="fill-overlay"></span>
+            <span class="trash-stack" aria-hidden="true"></span>
+            <span class="fill-bar" aria-hidden="true"></span>
           </button>
         </div>
       </section>
 
       <footer class="controls">
         <button id="shuffle" class="ghost">New Item</button>
+        <button id="styleToggle" class="ghost">Fill Style</button>
+        <button id="changeProfile" class="ghost">Change Profile</button>
         <button id="reset" class="solid">Reset</button>
       </footer>
 
       <div id="toast" class="toast" aria-live="polite"></div>
     </main>
+
+    <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <div class="modal-card">
+        <h2 id="profileTitle">Player Profile</h2>
+        <p class="modal-sub">Tell us about you to start the game.</p>
+        <form id="profileForm">
+          <label class="field">
+            <span>Name</span>
+            <input id="playerName" type="text" required placeholder="Your name" />
+          </label>
+          <label class="field">
+            <span>Age</span>
+            <input id="playerAge" type="number" min="1" max="120" required placeholder="Your age" />
+          </label>
+          <label class="field">
+            <span>Gender</span>
+            <select id="playerGender" required>
+              <option value="" disabled selected>Select</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Non-binary">Non-binary</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>City</span>
+            <input id="playerCity" type="text" required placeholder="Your city" />
+          </label>
+          <label class="field">
+            <span>Language</span>
+            <select id="playerLanguage" required>
+              <option value="" disabled selected>Select</option>
+              <option value="English">English</option>
+              <option value="Hinglish">Hinglish</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Bengali">Bengali</option>
+              <option value="Tamil">Tamil</option>
+              <option value="Gujarati">Gujarati</option>
+              <option value="Kannada">Kannada</option>
+            </select>
+          </label>
+          <button type="submit" class="solid wide">Start</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="endModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+      <div class="modal-card">
+        <h2 id="endTitle">Civic Sense Score</h2>
+        <p class="modal-sub">Great effort! Your score:</p>
+        <div id="civicScore" class="score-big">0</div>
+        <button id="shareScore" class="ghost wide">Share your score with others</button>
+        <p id="civicNote" class="score-note">
+          Thodi sharam aani chahea, desh ka Zero Civic Sense dikhta hai or khud ka nahi?
+        </p>
+        <button id="startPractice" class="solid wide">Start Practice Mode</button>
+      </div>
+    </div>
+
+    <div id="practiceEndModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="practiceEndTitle">
+      <div class="modal-card">
+        <h2 id="practiceEndTitle">Practice Result</h2>
+        <div id="practiceScore" class="score-big">0</div>
+        <div class="gandhi">🧹</div>
+        <p id="learningPoint" class="learning-point"></p>
+        <p class="modal-sub">
+          or practice kar, itne me kaam nahi chalega and the top score wins a prize
+        </p>
+        <button id="practiceAgain" class="solid wide">Play Again</button>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>

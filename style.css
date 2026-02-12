@@ -91,6 +91,42 @@ body {
   align-self: center;
 }
 
+.history {
+  min-width: 180px;
+  align-self: center;
+  background: var(--cream);
+  border-radius: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(16, 20, 21, 0.08);
+}
+
+.history .label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--ink);
+  font-family: "Space Mono", monospace;
+}
+
+.history-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .stat {
   background: var(--cream);
   padding: 12px 16px;
@@ -198,6 +234,106 @@ body {
   width: 25vw;
   max-width: 300px;
   min-width: 220px;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+}
+
+.box.shake {
+  animation: bin-shake 0.35s ease;
+}
+
+@keyframes bin-shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.bin-emoji {
+  font-size: 4.2rem;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.bin-label {
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 2;
+}
+
+.bin-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+  opacity: 0.9;
+}
+
+.fill-overlay,
+.trash-stack,
+.fill-bar {
+  position: absolute;
+  inset: auto 14% 14% 14%;
+  height: 0%;
+  border-radius: 14px;
+  opacity: 0;
+  transition: height 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.boxes[data-fill-style="overlay"] .fill-overlay {
+  background: rgba(255, 255, 255, 0.25);
+  opacity: 1;
+}
+
+.boxes[data-fill-style="overlay"] .box {
+  --fill: 0%;
+}
+
+.boxes[data-fill-style="overlay"] .fill-overlay {
+  height: var(--fill);
+}
+
+.boxes[data-fill-style="stack"] .trash-stack {
+  opacity: 1;
+  height: auto;
+  inset: auto 10% 14% 10%;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  font-size: 1.4rem;
+}
+
+.boxes[data-fill-style="bar"] .fill-bar {
+  opacity: 1;
+  inset: auto 18% 16% 18%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.boxes[data-fill-style="bar"] .fill-bar::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: var(--fill, 0%);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  transition: width 0.3s ease;
 }
 
 .boxes.pop .box {
@@ -281,6 +417,10 @@ button.solid {
   border-color: transparent;
 }
 
+.wide {
+  width: 100%;
+}
+
 .toast {
   position: absolute;
   bottom: 24px;
@@ -301,6 +441,88 @@ button.solid {
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(-6px);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 20, 21, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 10;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  width: min(380px, 100%);
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.5);
+}
+
+.modal-card h2 {
+  margin: 0 0 6px;
+}
+
+.modal-sub {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.gandhi {
+  font-size: 3rem;
+  text-align: center;
+  margin: 6px 0 8px;
+}
+
+.learning-point {
+  margin: 0 0 16px;
+  color: var(--ink);
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 20, 21, 0.18);
+  font-size: 0.95rem;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  color: var(--ink);
+}
+
+.score-big {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin: 12px 0 18px;
+  font-family: "Space Mono", monospace;
+  text-align: center;
+}
+
+.score-note {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  color: var(--muted);
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
 }
 
 @media (max-width: 720px) {
