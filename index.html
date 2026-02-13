@@ -209,6 +209,32 @@
       </div>
     </div>
 
+    <!-- Added DataBase FireStore -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+      import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDlktCZaQxZ1tL4dJKnGwDkJgTHAVdPfHA",
+        authDomain: "civicsense-8a9db.firebaseapp.com",
+        projectId: "civicsense-8a9db",
+        storageBucket: "civicsense-8a9db.firebasestorage.app",
+        messagingSenderId: "61969210324",
+        appId: "1:61969210324:web:2bf88195f619d05c1a9441",
+        measurementId: "G-79PBVLLNP7",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.firebaseAddScore = async (payload) => {
+        await addDoc(collection(db, "scores"), {
+          ...payload,
+          createdAt: serverTimestamp(),
+        });
+      };
+    </script>
+
     <script src="script.js"></script>
   </body>
 </html>

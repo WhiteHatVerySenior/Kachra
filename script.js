@@ -181,6 +181,7 @@ const loadProfile = () => {
 const saveProfile = (profile) => {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 };
+let currentProfile = loadProfile();
 
 const randomItem = () => items[Math.floor(Math.random() * items.length)];
 const shuffledItems = () => {
@@ -466,6 +467,20 @@ const stopGame = () => {
   }
   if (practiceScoreEl) practiceScoreEl.textContent = String(score);
   if (learningPointEl) learningPointEl.textContent = randomLearningPoint();
+  if (window.firebaseAddScore) {
+    window.firebaseAddScore({
+      mode: "practice",
+      score,
+      attempts: practiceAttempts,
+      name: currentProfile?.name || "",
+      age: currentProfile?.age || "",
+      gender: currentProfile?.gender || "",
+      city: currentProfile?.city || "",
+      language: currentProfile?.language || "",
+    })
+      .then(() => showToast("Score saved", true))
+      .catch(() => showToast("Save failed", false));
+  }
   if (practiceEndModal) practiceEndModal.classList.remove("hidden");
 };
 
@@ -575,6 +590,19 @@ const endTest = () => {
         ? "Share your score with others, lekin waise ye dikhane layak score hai nahi"
         : "Share your score with others";
   }
+  if (window.firebaseAddScore) {
+    window.firebaseAddScore({
+      mode: "test",
+      score: percent,
+      name: currentProfile?.name || "",
+      age: currentProfile?.age || "",
+      gender: currentProfile?.gender || "",
+      city: currentProfile?.city || "",
+      language: currentProfile?.language || "",
+    })
+      .then(() => showToast("Score saved", true))
+      .catch(() => showToast("Save failed", false));
+  }
   if (endModal) endModal.classList.remove("hidden");
 };
 
@@ -586,12 +614,11 @@ updateStats();
 renderHistory();
 applyFillStyle();
 
-const profile = loadProfile();
-if (!profile) {
+if (!currentProfile) {
   gameActive = false;
   if (profileModal) profileModal.classList.remove("hidden");
 }
-if (profile) {
+if (currentProfile) {
   startTest();
 }
 
@@ -614,6 +641,7 @@ if (profileForm) {
     )
       return;
     saveProfile(profileData);
+    currentProfile = profileData;
     if (profileModal) profileModal.classList.add("hidden");
     alert("Are you ready to know your Civic Sense Score?");
     startTest();
@@ -650,6 +678,7 @@ if (styleToggleBtn) {
 if (changeProfileBtn) {
   changeProfileBtn.addEventListener("click", () => {
     localStorage.removeItem(PROFILE_KEY);
+    currentProfile = null;
     if (profileModal) profileModal.classList.remove("hidden");
     gameActive = false;
   });
