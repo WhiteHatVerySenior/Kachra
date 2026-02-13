@@ -226,6 +226,17 @@ body {
   display: none;
 }
 
+.scores-link {
+  position: absolute;
+  top: 24px;
+  right: 20px;
+  z-index: 5;
+}
+
+.controls {
+  position: relative;
+}
+
 .history .label {
   display: block;
   font-size: 0.7rem;
