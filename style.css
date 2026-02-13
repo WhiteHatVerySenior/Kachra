@@ -782,7 +782,10 @@ button.solid {
   }
 
   .item-color {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    word-break: break-word;
   }
 
   .arena {
@@ -816,5 +819,10 @@ button.solid {
 
   .modal-card {
     width: min(92vw, 520px);
+  }
+
+  .item-card {
+    width: 100%;
+    padding: 16px;
   }
 }
