@@ -611,6 +611,13 @@ const endTest = () => {
   if (civicScoreEl) {
     civicScoreEl.textContent = percent + " / 100";
   }
+  const resultLine = document.querySelector("#endModal .modal-sub");
+  if (resultLine) {
+    resultLine.textContent =
+      percent < 15
+        ? "Somalian Pirates have better Civic Sense than you. Your score"
+        : "Great effort! Your score:";
+  }
   if (shareScoreBtn) {
     shareScoreBtn.textContent =
       percent < 80
