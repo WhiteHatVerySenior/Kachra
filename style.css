@@ -136,6 +136,37 @@ body {
   justify-content: center;
 }
 
+.geeks-page {
+  max-width: 900px;
+}
+
+.geeks-panel {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(16, 20, 21, 0.08);
+}
+
+.geeks-panel h2 {
+  margin: 18px 0 8px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.geeks-panel .tint-red {
+  color: #3a1515;
+}
+
+.geeks-panel ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+}
+
+.geeks-panel li {
+  margin-bottom: 6px;
+}
+
 .stage {
   width: min(980px, 100%);
   background: var(--panel);
@@ -226,15 +257,13 @@ body {
   display: none;
 }
 
-.scores-link {
+.top-links {
   position: absolute;
   top: 24px;
   right: 20px;
   z-index: 5;
-}
-
-.controls {
-  position: relative;
+  display: flex;
+  gap: 10px;
 }
 
 .history .label {

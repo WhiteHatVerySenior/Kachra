@@ -84,6 +84,7 @@ const changeProfileBtn = document.getElementById("changeProfile");
 const backToTestBtn = document.getElementById("backToTest");
 const memeModeBtn = document.getElementById("memeMode");
 const scoresLink = document.getElementById("scoresLink");
+const geeksLink = document.getElementById("geeksLink");
 const resetBtn = document.getElementById("reset");
 const boxesWrap = document.querySelector(".boxes");
 const boxes = Array.from(document.querySelectorAll(".box"));
@@ -596,6 +597,7 @@ const startGame = () => {
   }
   if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=practice";
+  if (geeksLink) geeksLink.href = "geeks.html?mode=practice";
   updateStats();
   updateBinScores();
   setItem(randomItem());
@@ -652,6 +654,7 @@ const startTest = () => {
   }
   if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=test";
+  if (geeksLink) geeksLink.href = "geeks.html?mode=test";
   updateStats();
   setItem(testItems[testIndex]);
 };

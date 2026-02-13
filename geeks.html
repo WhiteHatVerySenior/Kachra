@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Geeks Corner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Added new info page. -->
+    <main class="scores-page geeks-page">
+      <header class="scores-header">
+        <div>
+          <span class="kicker">Prototype 0.5.0</span>
+          <h1>Geeks Corner</h1>
+          <p>Why this training helps at scale.</p>
+        </div>
+        <a id="backLink" class="ghost link-button" href="index.html">Back to Game</a>
+      </header>
+
+      <section class="geeks-panel">
+        <h2>Behavior change at household level</h2>
+        <ul>
+          <li>Makes segregation rules simple and memorable (wet/dry/hazard/e-waste).</li>
+          <li>Repetition builds habit; wrong-bin penalties simulate real consequences.</li>
+          <li>Helps families teach kids and elders with a shared, low-effort activity.</li>
+        </ul>
+
+        <h2>Cleaner waste streams</h2>
+        <ul>
+          <li>Less contamination = higher recycling and compost rates.</li>
+          <li>Better segregation reduces rejection/landfill burden.</li>
+          <li>Dry waste becomes valuable instead of useless.</li>
+        </ul>
+
+        <h2>Public health + safety</h2>
+        <ul>
+          <li>Sanitary/hazardous waste kept out of general streams.</li>
+          <li>Fewer injuries for sanitation workers (blades, broken glass, diapers).</li>
+        </ul>
+
+        <h2>Municipal cost reduction</h2>
+        <ul>
+          <li>Sorting at source reduces manual sorting costs at MRFs.</li>
+          <li>Lower transport and processing cost when waste is separated.</li>
+        </ul>
+
+        <h2 class="tint-red">Education at scale</h2>
+        <ul>
+          <li>A simple, mobile-friendly game spreads faster than workshops.</li>
+          <li>Can be reused in schools, RWAs, campaigns, and CSR programs.</li>
+        </ul>
+
+        <h2>Data-driven improvement</h2>
+        <ul>
+          <li>With score tracking, you can see where misconceptions persist.</li>
+          <li>Helps design better awareness campaigns.</li>
+        </ul>
+      </section>
+    </main>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get("mode");
+      const backLink = document.getElementById("backLink");
+      if (backLink && mode) {
+        backLink.href = `index.html?mode=${mode}`;
+      }
+    </script>
+  </body>
+</html>
