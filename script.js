@@ -257,8 +257,9 @@ const updateStats = () => {
   if (practiceScoreRow) {
     if (mode === "game") {
       practiceScoreRow.style.display = "flex";
-      if (practiceScoreNow) practiceScoreNow.textContent = `Score: ${score}`;
-      if (practiceScoreHigh) practiceScoreHigh.textContent = `High: ${practiceHighRemote}`;
+      if (practiceScoreNow) practiceScoreNow.textContent = `Your Current Score: ${score} ||`;
+      if (practiceScoreHigh)
+        practiceScoreHigh.textContent = `Top Score to beat: ${practiceHighRemote}`;
     } else {
       practiceScoreRow.style.display = "none";
     }
@@ -599,15 +600,22 @@ const startGame = () => {
   updateBinScores();
   setItem(randomItem());
   if (itemCounter) itemCounter.textContent = "";
-  practiceHighRemote = 0;
-  if (practiceScoreHigh) practiceScoreHigh.textContent = `High: ${practiceHighRemote}`;
+    practiceHighRemote = 0;
+    if (practiceScoreHigh) practiceScoreHigh.textContent = `Top Score to beat: ${practiceHighRemote}`;
   if (window.firebaseGetPracticeHigh) {
     window.firebaseGetPracticeHigh()
       .then((value) => {
-        practiceHighRemote = value;
-        if (practiceScoreHigh) practiceScoreHigh.textContent = `High: ${practiceHighRemote}`;
+        practiceHighRemote = Number(value || 0);
+        if (practiceScoreHigh)
+          practiceScoreHigh.textContent = `Top Score to beat: ${practiceHighRemote}`;
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (practiceScoreHigh) practiceScoreHigh.textContent = "Top Score to beat: --";
+        showToast("High score fetch failed", false);
+        console.error(err);
+      });
+  } else {
+    if (practiceScoreHigh) practiceScoreHigh.textContent = "Top Score to beat: --";
   }
 };
 
