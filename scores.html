@@ -16,14 +16,29 @@
     <main class="scores-page">
       <header class="scores-header">
         <div>
-          <span class="kicker">Prototype 0.4.0</span>
+          <span class="kicker">Prototype 0.4.1</span>
           <h1>Civic Sense Scores</h1>
           <p>Live scores from Firestore.</p>
         </div>
-        <a class="ghost link-button" href="index.html">Back to Game</a>
+        <a id="backLink" class="ghost link-button" href="index.html">Back to Game</a>
       </header>
 
       <section class="scores-panel">
+        <div class="scores-controls">
+          <div class="tabs">
+            <button class="tab active" data-mode="test">Test</button>
+            <button class="tab" data-mode="practice">Practice</button>
+          </div>
+          <div class="sorter">
+            <label>
+              Sort by
+              <select id="sortBy">
+                <option value="createdAt">Time</option>
+                <option value="score">Score</option>
+              </select>
+            </label>
+          </div>
+        </div>
         <div class="scores-meta">
           <span id="scoresStatus">Loading…</span>
         </div>
@@ -48,7 +63,6 @@
       </section>
     </main>
 
-    <!-- Added scores page -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
       import {
@@ -56,6 +70,7 @@
         collection,
         query,
         orderBy,
+        where,
         limit,
         onSnapshot,
       } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -74,6 +89,13 @@
       const db = getFirestore(app);
       const scoresBody = document.getElementById("scoresBody");
       const scoresStatus = document.getElementById("scoresStatus");
+      const tabs = Array.from(document.querySelectorAll(".tab"));
+      const sortBy = document.getElementById("sortBy");
+      const backLink = document.getElementById("backLink");
+
+      const params = new URLSearchParams(window.location.search);
+      let currentMode = params.get("mode") === "practice" ? "practice" : "test";
+      let unsubscribe = null;
 
       const formatTime = (timestamp) => {
         if (!timestamp) return "";
@@ -81,39 +103,67 @@
         return date.toLocaleString();
       };
 
-      const q = query(collection(db, "scores"), orderBy("createdAt", "desc"), limit(200));
-
-      onSnapshot(
-        q,
-        (snapshot) => {
-          scoresBody.innerHTML = "";
-          if (snapshot.empty) {
-            scoresStatus.textContent = "No scores yet.";
-            return;
-          }
-          scoresStatus.textContent = "";
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${formatTime(data.createdAt)}</td>
-              <td>${data.name || ""}</td>
-              <td>${data.age || ""}</td>
-              <td>${data.gender || ""}</td>
-              <td>${data.city || ""}</td>
-              <td>${data.language || ""}</td>
-              <td>${data.mode || ""}</td>
-              <td>${data.score ?? ""}</td>
-              <td>${data.attempts ?? ""}</td>
-            `;
-            scoresBody.appendChild(tr);
-          });
-        },
-        (error) => {
-          scoresStatus.textContent = "Failed to load scores.";
-          console.error(error);
+      const renderSnapshot = (snapshot) => {
+        scoresBody.innerHTML = "";
+        if (snapshot.empty) {
+          scoresStatus.textContent = "No scores yet.";
+          return;
         }
-      );
+        scoresStatus.textContent = "";
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${formatTime(data.createdAt)}</td>
+            <td>${data.name || ""}</td>
+            <td>${data.age || ""}</td>
+            <td>${data.gender || ""}</td>
+            <td>${data.city || ""}</td>
+            <td>${data.language || ""}</td>
+            <td>${data.mode || ""}</td>
+            <td>${data.score ?? ""}</td>
+            <td>${data.attempts ?? ""}</td>
+          `;
+          scoresBody.appendChild(tr);
+        });
+      };
+
+      const subscribe = () => {
+        if (unsubscribe) unsubscribe();
+        const orderField = sortBy.value === "score" ? "score" : "createdAt";
+        const q = query(
+          collection(db, "scores"),
+          where("mode", "==", currentMode),
+          orderBy(orderField, "desc"),
+          limit(200)
+        );
+        unsubscribe = onSnapshot(
+          q,
+          renderSnapshot,
+          (error) => {
+            scoresStatus.textContent = "Failed to load scores.";
+            console.error(error);
+          }
+        );
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          currentMode = tab.dataset.mode;
+          if (backLink) backLink.href = `index.html?mode=${currentMode}`;
+          subscribe();
+        });
+      });
+
+      tabs.forEach((tab) => {
+        if (tab.dataset.mode === currentMode) tab.classList.add("active");
+        else tab.classList.remove("active");
+      });
+      if (backLink) backLink.href = `index.html?mode=${currentMode}`;
+      sortBy.addEventListener("change", subscribe);
+      subscribe();
     </script>
   </body>
 </html>

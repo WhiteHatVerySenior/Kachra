@@ -16,7 +16,7 @@
     <main class="stage">
       <header class="hud">
         <div class="title">
-          <span class="kicker">Prototype 0.4.1</span>
+          <span class="kicker">Prototype 0.4.2</span>
           <h1>Waste Sort Sprint</h1>
           <p>Match each item to the correct bin. Misses break your streak.</p>
         </div>
@@ -132,7 +132,7 @@
         <button id="changeProfile" class="ghost">Change Profile</button>
         <button id="backToTest" class="ghost">Back to Score Test</button>
         <button id="memeMode" class="ghost">Meme Mode: Off</button>
-        <a class="ghost link-button" href="scores.html">Scores</a>
+        <a id="scoresLink" class="ghost link-button" href="scores.html">Scores</a>
         <button id="reset" class="solid">Reset</button>
       </footer>
 
@@ -141,16 +141,42 @@
 
     <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
       <div class="modal-card">
+        <div class="welcome-hero">
+          WELCOME TO CHAPTER 1 of CIVIC SENSE COURSE FOR INDIA
+        </div>
         <h2 id="profileTitle">Player Profile</h2>
-        <p class="modal-sub">Tell us about you to start the game.</p>
+        <p class="modal-sub">
+          This data is IMPORTANT for me to understand how the prototype is working
+        </p>
         <form id="profileForm">
           <label class="field">
             <span>Name</span>
             <input id="playerName" type="text" required placeholder="Your name" />
           </label>
           <label class="field">
-            <span>Age</span>
-            <input id="playerAge" type="number" min="1" max="120" required placeholder="Your age" />
+            <span>Age Group</span>
+            <select id="playerAge" required>
+              <option value="" disabled selected>Select</option>
+              <option value="0-10">0-10</option>
+              <option value="10-15">10-15</option>
+              <option value="15-20">15-20</option>
+              <option value="20-25">20-25</option>
+              <option value="25-30">25-30</option>
+              <option value="30-35">30-35</option>
+              <option value="35-40">35-40</option>
+              <option value="40-45">40-45</option>
+              <option value="45-50">45-50</option>
+              <option value="50-55">50-55</option>
+              <option value="55-60">55-60</option>
+              <option value="60-65">60-65</option>
+              <option value="65-70">65-70</option>
+              <option value="70-75">70-75</option>
+              <option value="75-80">75-80</option>
+              <option value="80-85">80-85</option>
+              <option value="85-90">85-90</option>
+              <option value="90-95">90-95</option>
+              <option value="95-100">95-100</option>
+            </select>
           </label>
           <label class="field">
             <span>Gender</span>
@@ -191,7 +217,7 @@
         <div id="civicScore" class="score-big">0</div>
         <button id="shareScore" class="ghost wide">Share your score with others</button>
         <p id="civicNote" class="score-note">
-          Thodi sharam aani chahea, desh ka Zero Civic Sense dikhta hai or khud ka nahi?
+          desh ka Zero Civic Sense dikhta hai or khud ka nahi? Every wrong item thrown in wrong basket ruins the entire batch
         </p>
         <p id="saveStatusTest" class="save-status"></p>
         <button id="startPractice" class="solid wide">Start Practice Mode</button>

@@ -35,10 +35,13 @@ const items = [
   { name: "Styrofoam Cup", emoji: "🥛", bin: "reject" },
   { name: "Broken Ceramic", emoji: "🏺", bin: "reject" },
   { name: "Used Pen", emoji: "🖊️", bin: "reject" },
-  { name: "Fata Kaccha", emoji: "🩲", bin: "reject" },
+  { name: "Used Garments", emoji: "👕", bin: "reject" },
   { name: "Broken Phone Cover", emoji: "📱", bin: "reject" },
   { name: "Cigarette Butts", emoji: "🚬", bin: "reject" },
+  { name: "Soiled Aluminum Foil", emoji: "🥫", bin: "reject" },
+  { name: "Dust", emoji: "🌫️", bin: "reject" },
   { name: "Metal Can", emoji: "🥫", bin: "dry" },
+  { name: "Clean Aluminum Foil", emoji: "🥫", bin: "dry" },
   { name: "Glass Bottle", emoji: "🍾", bin: "dry" },
   { name: "Broken Glass (Wrapped in Paper)", emoji: "🧪", bin: "dry" },
   { name: "Thermocol", emoji: "🧊", bin: "reject" },
@@ -73,6 +76,7 @@ const styleToggleBtn = document.getElementById("styleToggle");
 const changeProfileBtn = document.getElementById("changeProfile");
 const backToTestBtn = document.getElementById("backToTest");
 const memeModeBtn = document.getElementById("memeMode");
+const scoresLink = document.getElementById("scoresLink");
 const resetBtn = document.getElementById("reset");
 const boxesWrap = document.querySelector(".boxes");
 const boxes = Array.from(document.querySelectorAll(".box"));
@@ -89,6 +93,7 @@ let audioReady = false;
 let mode = "test";
 let testIndex = 0;
 let testCorrect = 0;
+let testWrong = 0;
 let memeMode = true;
 let fillStyleIndex = 0;
 const fillStyles = ["overlay", "stack", "bar"];
@@ -382,6 +387,8 @@ const handleChoice = (choice) => {
   if (mode === "test") {
     if (choice === currentItem.bin) {
       testCorrect += 1;
+    } else {
+      testWrong += 1;
     }
     testIndex += 1;
     round = Math.min(testIndex + 1, testItems.length);
@@ -549,6 +556,7 @@ const startGame = () => {
     stage.classList.remove("test-mode");
     stage.classList.add("practice-mode");
   }
+  if (scoresLink) scoresLink.href = "scores.html?mode=practice";
   updateStats();
   updateBinScores();
   setItem(randomItem());
@@ -564,6 +572,7 @@ const startTest = () => {
   testIndex = 0;
   testItems = shuffledItems();
   testCorrect = 0;
+  testWrong = 0;
   score = 0;
   streak = 0;
   round = 1;
@@ -583,6 +592,7 @@ const startTest = () => {
     stage.classList.remove("practice-mode");
     stage.classList.add("test-mode");
   }
+  if (scoresLink) scoresLink.href = "scores.html?mode=test";
   updateStats();
   setItem(testItems[testIndex]);
 };
@@ -590,7 +600,8 @@ const startTest = () => {
 const endTest = () => {
   gameActive = false;
   const total = testItems.length || items.length;
-  const percent = Math.round((testCorrect / total) * 100);
+  const raw = testCorrect - 2 * testWrong;
+  const percent = Math.round((raw / total) * 100);
   if (civicScoreEl) {
     civicScoreEl.textContent = percent + " / 100";
   }
@@ -632,12 +643,17 @@ updateStats();
 renderHistory();
 applyFillStyle();
 
-if (!currentProfile) {
+const params = new URLSearchParams(window.location.search);
+const returnMode = params.get("mode");
+if (returnMode === "practice") {
+  if (profileModal) profileModal.classList.add("hidden");
+  startGame();
+} else if (returnMode === "test") {
+  if (profileModal) profileModal.classList.add("hidden");
+  startTest();
+} else {
   gameActive = false;
   if (profileModal) profileModal.classList.remove("hidden");
-}
-if (currentProfile) {
-  startTest();
 }
 
 if (profileForm) {
@@ -645,7 +661,7 @@ if (profileForm) {
     event.preventDefault();
     const profileData = {
       name: playerName.value.trim(),
-      age: Number(playerAge.value),
+      age: playerAge.value,
       gender: playerGender.value,
       city: playerCity.value.trim(),
       language: playerLanguage.value,
