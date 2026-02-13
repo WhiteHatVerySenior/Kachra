@@ -324,6 +324,13 @@ body {
   letter-spacing: 0.1em;
 }
 
+.item-counter {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+}
+
 .boxes {
   display: flex;
   justify-content: center;

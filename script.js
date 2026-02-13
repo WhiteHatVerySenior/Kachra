@@ -63,6 +63,7 @@ const items = [
 const itemCard = document.getElementById("itemCard");
 const itemOrb = document.getElementById("itemOrb");
 const itemColor = document.getElementById("itemColor");
+const itemCounter = document.getElementById("itemCounter");
 const scoreEl = document.getElementById("score");
 const streakEl = document.getElementById("streak");
 const roundEl = document.getElementById("round");
@@ -216,6 +217,14 @@ const setItem = (item) => {
     itemOrb.textContent = item.emoji || "❓";
   }
   itemColor.textContent = item.name.toUpperCase();
+  if (itemCounter) {
+    if (mode === "test") {
+      const total = testItems.length || items.length;
+      itemCounter.textContent = `${Math.min(testIndex + 1, total)} / ${total}`;
+    } else {
+      itemCounter.textContent = "";
+    }
+  }
   itemCard.classList.remove("pop");
   void itemCard.offsetWidth;
   itemCard.classList.add("pop");
@@ -566,6 +575,7 @@ const startGame = () => {
   updateStats();
   updateBinScores();
   setItem(randomItem());
+  if (itemCounter) itemCounter.textContent = "";
 };
 
 const startTest = () => {
@@ -611,7 +621,7 @@ const endTest = () => {
   if (civicScoreEl) {
     civicScoreEl.textContent = percent + " / 100";
   }
-  const resultLine = document.querySelector("#endModal .modal-sub");
+  const resultLine = document.getElementById("testResultLine");
   if (resultLine) {
     resultLine.textContent =
       percent < 15
