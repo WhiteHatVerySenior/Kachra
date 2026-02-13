@@ -100,7 +100,7 @@ body {
   border-radius: 16px;
   padding: 12px 14px;
   border: 1px solid rgba(16, 20, 21, 0.08);
-  margin-top: 0;
+  margin-top: -40px;
   position: relative;
   top: -160px;
 }
@@ -155,7 +155,7 @@ body {
 .arena {
   display: grid;
   gap: 28px;
-  margin-top: -60px;
+  margin-top: 0;
   position: relative;
   z-index: 2;
   min-height: 60vh;
