@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Civic Sense Scores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="scores-page">
+      <header class="scores-header">
+        <div>
+          <span class="kicker">Prototype 0.4.0</span>
+          <h1>Civic Sense Scores</h1>
+          <p>Live scores from Firestore.</p>
+        </div>
+        <a class="ghost link-button" href="index.html">Back to Game</a>
+      </header>
+
+      <section class="scores-panel">
+        <div class="scores-meta">
+          <span id="scoresStatus">Loading…</span>
+        </div>
+        <div class="scores-table-wrap">
+          <table class="scores-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>City</th>
+                <th>Language</th>
+                <th>Mode</th>
+                <th>Score</th>
+                <th>Attempts</th>
+              </tr>
+            </thead>
+            <tbody id="scoresBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Added scores page -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        orderBy,
+        limit,
+        onSnapshot,
+      } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDlktCZaQxZ1tL4dJKnGwDkJgTHAVdPfHA",
+        authDomain: "civicsense-8a9db.firebaseapp.com",
+        projectId: "civicsense-8a9db",
+        storageBucket: "civicsense-8a9db.firebasestorage.app",
+        messagingSenderId: "61969210324",
+        appId: "1:61969210324:web:2bf88195f619d05c1a9441",
+        measurementId: "G-79PBVLLNP7",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const scoresBody = document.getElementById("scoresBody");
+      const scoresStatus = document.getElementById("scoresStatus");
+
+      const formatTime = (timestamp) => {
+        if (!timestamp) return "";
+        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        return date.toLocaleString();
+      };
+
+      const q = query(collection(db, "scores"), orderBy("createdAt", "desc"), limit(200));
+
+      onSnapshot(
+        q,
+        (snapshot) => {
+          scoresBody.innerHTML = "";
+          if (snapshot.empty) {
+            scoresStatus.textContent = "No scores yet.";
+            return;
+          }
+          scoresStatus.textContent = "";
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${formatTime(data.createdAt)}</td>
+              <td>${data.name || ""}</td>
+              <td>${data.age || ""}</td>
+              <td>${data.gender || ""}</td>
+              <td>${data.city || ""}</td>
+              <td>${data.language || ""}</td>
+              <td>${data.mode || ""}</td>
+              <td>${data.score ?? ""}</td>
+              <td>${data.attempts ?? ""}</td>
+            `;
+            scoresBody.appendChild(tr);
+          });
+        },
+        (error) => {
+          scoresStatus.textContent = "Failed to load scores.";
+          console.error(error);
+        }
+      );
+    </script>
+  </body>
+</html>

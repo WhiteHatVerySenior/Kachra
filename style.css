@@ -27,6 +27,71 @@ body {
   padding: 32px 18px;
 }
 
+.scores-page {
+  width: min(1100px, 100%);
+  background: var(--panel);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 32px;
+}
+
+.scores-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.scores-header h1 {
+  margin: 8px 0 4px;
+}
+
+.scores-panel {
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  border: 1px solid rgba(16, 20, 21, 0.08);
+}
+
+.scores-meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.scores-table-wrap {
+  overflow: auto;
+  max-height: 60vh;
+}
+
+.scores-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.scores-table th,
+.scores-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(16, 20, 21, 0.08);
+}
+
+.scores-table th {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.link-button {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .stage {
   width: min(980px, 100%);
   background: var(--panel);
@@ -554,6 +619,13 @@ button.solid {
   color: var(--ink);
   text-align: center;
   font-size: 1.05rem;
+}
+
+.save-status {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .field {

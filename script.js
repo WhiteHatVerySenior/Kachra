@@ -140,10 +140,12 @@ const civicScoreEl = document.getElementById("civicScore");
 const startPracticeBtn = document.getElementById("startPractice");
 const stage = document.querySelector(".stage");
 const shareScoreBtn = document.getElementById("shareScore");
+const saveStatusTest = document.getElementById("saveStatusTest");
 const practiceEndModal = document.getElementById("practiceEndModal");
 const practiceScoreEl = document.getElementById("practiceScore");
 const practiceAgainBtn = document.getElementById("practiceAgain");
 const learningPointEl = document.getElementById("learningPoint");
+const saveStatusPractice = document.getElementById("saveStatusPractice");
 
 const learningPoints = [
   "Wrong Answer makes basket score ZERO because ek galat kachre se garbage colletion ka entire batch kharab ho jata hai!",
@@ -478,8 +480,16 @@ const stopGame = () => {
       city: currentProfile?.city || "",
       language: currentProfile?.language || "",
     })
-      .then(() => showToast("Score saved", true))
-      .catch(() => showToast("Save failed", false));
+      .then(() => {
+        showToast("Score saved", true);
+        if (saveStatusPractice) saveStatusPractice.textContent = "Score saved";
+      })
+      .catch(() => {
+        showToast("Save failed", false);
+        if (saveStatusPractice) saveStatusPractice.textContent = "Save failed";
+      });
+  } else if (saveStatusPractice) {
+    saveStatusPractice.textContent = "Firebase not loaded";
   }
   if (practiceEndModal) practiceEndModal.classList.remove("hidden");
 };
@@ -600,8 +610,16 @@ const endTest = () => {
       city: currentProfile?.city || "",
       language: currentProfile?.language || "",
     })
-      .then(() => showToast("Score saved", true))
-      .catch(() => showToast("Save failed", false));
+      .then(() => {
+        showToast("Score saved", true);
+        if (saveStatusTest) saveStatusTest.textContent = "Score saved";
+      })
+      .catch(() => {
+        showToast("Save failed", false);
+        if (saveStatusTest) saveStatusTest.textContent = "Save failed";
+      });
+  } else if (saveStatusTest) {
+    saveStatusTest.textContent = "Firebase not loaded";
   }
   if (endModal) endModal.classList.remove("hidden");
 };
