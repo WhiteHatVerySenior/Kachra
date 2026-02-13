@@ -16,7 +16,7 @@
     <main class="stage">
       <header class="hud">
         <div class="title">
-          <span class="kicker">Prototype 0.2.0</span>
+          <span class="kicker">Prototype 0.3.0</span>
           <h1>Waste Sort Sprint</h1>
           <p>Match each item to the correct bin. Misses break your streak.</p>
         </div>
@@ -58,25 +58,66 @@
         </div>
 
         <div class="boxes">
-          <button class="box green" data-color="compost">
+          <button
+            class="box green"
+            data-color="wet"
+            data-tooltip-test="Organic"
+            data-tooltip-practice="Food and biodegradable waste that can compost."
+          >
             <span class="bin-emoji">🗑️</span>
-            <span class="bin-label">COMPOST</span>
+            <span class="bin-label">WET</span>
             <span class="bin-score">0</span>
             <span class="fill-overlay"></span>
             <span class="trash-stack" aria-hidden="true"></span>
             <span class="fill-bar" aria-hidden="true"></span>
           </button>
-          <button class="box blue" data-color="recycle">
+          <button
+            class="box blue"
+            data-color="dry"
+            data-tooltip-test="Recyclable"
+            data-tooltip-practice="Clean, recyclable paper, plastic, metal, glass."
+          >
             <span class="bin-emoji">🗑️</span>
-            <span class="bin-label">RECYCLE</span>
+            <span class="bin-label">DRY</span>
             <span class="bin-score">0</span>
             <span class="fill-overlay"></span>
             <span class="trash-stack" aria-hidden="true"></span>
             <span class="fill-bar" aria-hidden="true"></span>
           </button>
-          <button class="box red" data-color="landfill">
+          <button
+            class="box red"
+            data-color="hazard"
+            data-tooltip-test="Toxic"
+            data-tooltip-practice="Sanitary or hazardous items that need safe handling."
+          >
             <span class="bin-emoji">🗑️</span>
-            <span class="bin-label">LANDFILL</span>
+            <span class="bin-label">HAZARD</span>
+            <span class="bin-score">0</span>
+            <span class="fill-overlay"></span>
+            <span class="trash-stack" aria-hidden="true"></span>
+            <span class="fill-bar" aria-hidden="true"></span>
+          </button>
+          <button
+            class="box black"
+            data-color="reject"
+            data-tooltip-test="Landfill"
+            data-tooltip-practice="Non-recyclable, contaminated dry waste."
+          >
+            <span class="bin-emoji">🗑️</span>
+            <span class="bin-label">REJECT</span>
+            <span class="bin-score">0</span>
+            <span class="fill-overlay"></span>
+            <span class="trash-stack" aria-hidden="true"></span>
+            <span class="fill-bar" aria-hidden="true"></span>
+          </button>
+          <button
+            class="box ewaste"
+            data-color="ewaste"
+            data-tooltip-test="Electronics"
+            data-tooltip-practice="Electronics, batteries, chargers, bulbs for special collection."
+          >
+            <span class="bin-emoji">⚡</span>
+            <span class="bin-label">E-WASTE</span>
             <span class="bin-score">0</span>
             <span class="fill-overlay"></span>
             <span class="trash-stack" aria-hidden="true"></span>
@@ -89,6 +130,8 @@
         <button id="shuffle" class="ghost">New Item</button>
         <button id="styleToggle" class="ghost">Fill Style</button>
         <button id="changeProfile" class="ghost">Change Profile</button>
+        <button id="backToTest" class="ghost">Back to Score Test</button>
+        <button id="memeMode" class="ghost">Meme Mode: Off</button>
         <button id="reset" class="solid">Reset</button>
       </footer>
 

@@ -61,6 +61,7 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 24px;
+  align-items: flex-start;
   position: relative;
   z-index: 2;
 }
@@ -86,18 +87,22 @@ body {
 
 .scoreboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  grid-auto-flow: column;
+  grid-template-columns: repeat(5, minmax(90px, 1fr));
   gap: 12px;
-  align-self: center;
+  align-self: flex-start;
 }
 
 .history {
   min-width: 180px;
-  align-self: center;
+  align-self: flex-start;
   background: var(--cream);
   border-radius: 16px;
   padding: 12px 14px;
   border: 1px solid rgba(16, 20, 21, 0.08);
+  margin-top: 0;
+  position: relative;
+  top: -160px;
 }
 
 .history .label {
@@ -150,7 +155,7 @@ body {
 .arena {
   display: grid;
   gap: 28px;
-  margin-top: 32px;
+  margin-top: -60px;
   position: relative;
   z-index: 2;
   min-height: 60vh;
@@ -213,7 +218,7 @@ body {
 .boxes {
   display: flex;
   justify-content: center;
-  gap: 22px;
+  gap: 10px;
   flex-wrap: nowrap;
   width: 100%;
 }
@@ -221,8 +226,8 @@ body {
 .box {
   border: none;
   border-radius: 18px;
-  padding: 44px 26px;
-  font-size: 1.35rem;
+  padding: 26px 14px;
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
@@ -231,12 +236,15 @@ body {
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   position: relative;
   overflow: hidden;
-  width: 25vw;
-  max-width: 300px;
-  min-width: 220px;
+  width: clamp(120px, 14vw, 170px);
   display: grid;
   place-items: center;
   gap: 12px;
+}
+
+.practice-mode .box,
+.test-mode .box {
+  overflow: visible;
 }
 
 .box.shake {
@@ -367,6 +375,58 @@ body {
   filter: brightness(1.05);
 }
 
+.test-mode .box::before {
+  content: attr(data-tooltip-test);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(16, 20, 21, 0.92);
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  width: max-content;
+  max-width: 220px;
+  text-transform: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 5;
+}
+
+.test-mode .box:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.practice-mode .box::before {
+  content: attr(data-tooltip-practice);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(16, 20, 21, 0.92);
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  width: max-content;
+  max-width: 220px;
+  text-transform: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 5;
+}
+
+.practice-mode .box:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .box:hover::after {
   opacity: 0.4;
 }
@@ -385,6 +445,15 @@ body {
 
 .box.green {
   background: linear-gradient(135deg, #34c48c, #157d56);
+}
+
+.box.black {
+  background: linear-gradient(135deg, #34343b, #0c0c10);
+}
+
+.box.ewaste {
+  background: linear-gradient(135deg, #f4f4f4, #cfcfcf);
+  color: #101415;
 }
 
 .controls {

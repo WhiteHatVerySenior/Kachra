@@ -1,29 +1,60 @@
+// Added extended list of items
+// Added 5 dustbins instead of 3, which made the game easier and high scoring
+// Added meme sounds
+// Changed the layout a litte bit
 const bins = [
-  { name: "Compost", key: "compost", hex: "#1f9c6b" },
-  { name: "Recycle", key: "recycle", hex: "#2666ff" },
-  { name: "Landfill", key: "landfill", hex: "#e3433b" },
+  { name: "Wet", key: "wet", hex: "#1f9c6b" },
+  { name: "Dry", key: "dry", hex: "#2666ff" },
+  { name: "Hazard", key: "hazard", hex: "#e3433b" },
+  { name: "Reject", key: "reject", hex: "#101415" },
+  { name: "E-waste", key: "ewaste", hex: "#cfcfcf" },
 ];
 
 const items = [
-  { name: "Banana Peel", emoji: "🍌", bin: "compost" },
-  { name: "Apple Core", emoji: "🍎", bin: "compost" },
-  { name: "Eggshells", emoji: "🥚", bin: "compost" },
-  { name: "Coffee Grounds", emoji: "☕", bin: "compost" },
-  { name: "Paper Towel", emoji: "🧻", bin: "compost" },
-  { name: "Plastic Bottle", emoji: "🧴", bin: "recycle" },
-  { name: "Aluminum Can", emoji: "🥫", bin: "recycle" },
-  { name: "Glass Jar", emoji: "🫙", bin: "recycle" },
-  { name: "Cardboard Box", emoji: "📦", bin: "recycle" },
-  { name: "Paper (Clean)", emoji: "📄", bin: "recycle" },
-  { name: "Chips Wrapper", emoji: "🍟", bin: "landfill" },
-  { name: "Plastic Straw", emoji: "🥤", bin: "landfill" },
-  { name: "Styrofoam Cup", emoji: "🥛", bin: "landfill" },
-  {
-    name: "Greasy Pizza Box",
-    image: "https://freesvg.org/download/194337",
-    bin: "landfill",
-  },
-  { name: "Broken Ceramic", emoji: "🏺", bin: "landfill" },
+  { name: "Vegetable Peels", emoji: "🥕", bin: "wet" },
+  { name: "Fruit Peels", emoji: "🍌", bin: "wet" },
+  { name: "Leftover Food", emoji: "🍛", bin: "wet" },
+  { name: "Roti / Rice / Dal", emoji: "🍚", bin: "wet" },
+  { name: "Egg Shells", emoji: "🥚", bin: "wet" },
+  { name: "Tea Leaves", emoji: "🍵", bin: "wet" },
+  { name: "Tea Bag (Paper Only)", emoji: "🫖", bin: "wet" },
+  { name: "Flowers", emoji: "💐", bin: "wet" },
+  { name: "Garden Leaves", emoji: "🍃", bin: "wet" },
+  { name: "Newspaper", emoji: "📰", bin: "dry" },
+  { name: "Office Paper", emoji: "📄", bin: "dry" },
+  { name: "Cardboard Box", emoji: "📦", bin: "dry" },
+  { name: "Clean Pizza Box (Top)", emoji: "📦", bin: "dry" },
+  { name: "Oily Pizza Box (Bottom)", emoji: "🧻", bin: "reject" },
+  { name: "Plastic Bottle", emoji: "🧴", bin: "dry" },
+  { name: "Old Shampoo Bottle", emoji: "🧴", bin: "dry" },
+  { name: "Empty Mosquito Repellent Bottle", emoji: "🧴", bin: "dry" },
+  { name: "Milk Packet (Washed)", emoji: "🥛", bin: "dry" },
+  { name: "Chips Packet (Clean)", emoji: "🍟", bin: "reject" },
+  { name: "Chocolate Wrapper", emoji: "🍫", bin: "reject" },
+  { name: "Plastic Straw", emoji: "🥤", bin: "reject" },
+  { name: "Styrofoam Cup", emoji: "🥛", bin: "reject" },
+  { name: "Broken Ceramic", emoji: "🏺", bin: "reject" },
+  { name: "Used Pen", emoji: "🖊️", bin: "reject" },
+  { name: "Fata Kaccha", emoji: "🩲", bin: "reject" },
+  { name: "Broken Phone Cover", emoji: "📱", bin: "reject" },
+  { name: "Cigarette Butts", emoji: "🚬", bin: "reject" },
+  { name: "Metal Can", emoji: "🥫", bin: "dry" },
+  { name: "Glass Bottle", emoji: "🍾", bin: "dry" },
+  { name: "Broken Glass (Wrapped in Paper)", emoji: "🧪", bin: "dry" },
+  { name: "Thermocol", emoji: "🧊", bin: "reject" },
+  { name: "Used Tissue (Soiled)", emoji: "🧻", bin: "wet" },
+  { name: "Paper Napkin (Oily)", emoji: "🧻", bin: "wet" },
+  { name: "Sanitary Pad", emoji: "🧷", bin: "hazard" },
+  { name: "Diaper", emoji: "🍼", bin: "hazard" },
+  { name: "Razor Blade", emoji: "🪒", bin: "hazard" },
+  { name: "Old Knife", emoji: "🔪", bin: "hazard" },
+  { name: "Used Mask", emoji: "😷", bin: "hazard" },
+  { name: "Expired Medicines", emoji: "💊", bin: "hazard" },
+  { name: "Empty Mosquito Repellent Spray Can", emoji: "🧯", bin: "hazard" },
+  { name: "Battery", emoji: "🔋", bin: "ewaste" },
+  { name: "Mobile Phone", emoji: "📱", bin: "ewaste" },
+  { name: "Charger / Wires", emoji: "🔌", bin: "ewaste" },
+  { name: "CFL / Tube Light", emoji: "💡", bin: "ewaste" },
 ];
 
 const itemCard = document.getElementById("itemCard");
@@ -40,6 +71,8 @@ const toast = document.getElementById("toast");
 const shuffleBtn = document.getElementById("shuffle");
 const styleToggleBtn = document.getElementById("styleToggle");
 const changeProfileBtn = document.getElementById("changeProfile");
+const backToTestBtn = document.getElementById("backToTest");
+const memeModeBtn = document.getElementById("memeMode");
 const resetBtn = document.getElementById("reset");
 const boxesWrap = document.querySelector(".boxes");
 const boxes = Array.from(document.querySelectorAll(".box"));
@@ -56,20 +89,27 @@ let audioReady = false;
 let mode = "test";
 let testIndex = 0;
 let testCorrect = 0;
+let memeMode = true;
 let fillStyleIndex = 0;
 const fillStyles = ["overlay", "stack", "bar"];
 const maxFill = 5;
 const binFill = {
-  compost: 0,
-  recycle: 0,
-  landfill: 0,
+  wet: 0,
+  dry: 0,
+  hazard: 0,
+  reject: 0,
+  ewaste: 0,
 };
 const binScores = {
-  compost: 0,
-  recycle: 0,
-  landfill: 0,
+  wet: 0,
+  dry: 0,
+  hazard: 0,
+  reject: 0,
+  ewaste: 0,
 };
 let lastLearningIndex = -1;
+let practiceAttempts = 0;
+let consecutiveWrong = 0;
 
 const HIGH_SCORE_KEY = "colorSortHighScore";
 const HISTORY_KEY = "colorSortHistory";
@@ -98,6 +138,7 @@ const playerLanguage = document.getElementById("playerLanguage");
 const endModal = document.getElementById("endModal");
 const civicScoreEl = document.getElementById("civicScore");
 const startPracticeBtn = document.getElementById("startPractice");
+const stage = document.querySelector(".stage");
 const shareScoreBtn = document.getElementById("shareScore");
 const practiceEndModal = document.getElementById("practiceEndModal");
 const practiceScoreEl = document.getElementById("practiceScore");
@@ -142,6 +183,15 @@ const saveProfile = (profile) => {
 };
 
 const randomItem = () => items[Math.floor(Math.random() * items.length)];
+const shuffledItems = () => {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
+let testItems = [];
 
 const setItem = (item) => {
   currentItem = item;
@@ -270,7 +320,25 @@ const playTone = (frequency, duration, type = "sine") => {
 };
 
 const soundCorrect = () => playTone(880, 0.12, "triangle");
-const soundWrong = () => playTone(220, 0.2, "sawtooth");
+const wrongSound = new Audio("assets/sfx/abe-sale-harmonium-cut.mp3");
+wrongSound.preload = "auto";
+const practiceEndSounds = [
+  new Audio("assets/sfx/khatam-ho-gaya-bhaiya-matter-puneet-superstar-audio-meme.mp3"),
+  new Audio("assets/sfx/7-crore-audio-meme-download.mp3"),
+];
+practiceEndSounds.forEach((audio) => {
+  audio.preload = "auto";
+});
+const doubleWrongSound = new Audio("assets/sfx/yaaa-puneet-superstar-indian-meme.mp3");
+doubleWrongSound.preload = "auto";
+const soundWrong = () => {
+  if (memeMode) {
+    wrongSound.currentTime = 0;
+    wrongSound.play().catch(() => {});
+  } else {
+    playTone(220, 0.2, "sawtooth");
+  }
+};
 const soundEnd = () => {
   playTone(660, 0.12, "triangle");
   setTimeout(() => playTone(440, 0.16, "triangle"), 120);
@@ -304,18 +372,22 @@ const soundTick = () => {
 
 const handleChoice = (choice) => {
   if (!gameActive) return;
+  if (memeMode && !doubleWrongSound.paused) {
+    doubleWrongSound.pause();
+    doubleWrongSound.currentTime = 0;
+  }
   if (mode === "test") {
     if (choice === currentItem.bin) {
       testCorrect += 1;
     }
     testIndex += 1;
-    round = Math.min(testIndex + 1, items.length);
-    if (testIndex >= items.length) {
+    round = Math.min(testIndex + 1, testItems.length);
+    if (testIndex >= testItems.length) {
       endTest();
       return;
     }
     updateStats();
-    setItem(items[testIndex]);
+    setItem(testItems[testIndex]);
     return;
   }
 
@@ -324,9 +396,11 @@ const handleChoice = (choice) => {
     startTimer();
     audioReady = true;
   }
+  practiceAttempts += 1;
   if (choice === currentItem.bin) {
+    consecutiveWrong = 0;
     binScores[choice] += 10;
-    score = binScores.compost + binScores.recycle + binScores.landfill;
+    score = binScores.wet + binScores.dry + binScores.hazard + binScores.reject + binScores.ewaste;
     updateBinScores();
     if (mode === "game") {
       updateBinFill(choice);
@@ -334,8 +408,9 @@ const handleChoice = (choice) => {
     if (audioReady) soundCorrect();
     showToast("Nice! +10", true);
   } else {
+    consecutiveWrong += 1;
     binScores[choice] = 0;
-    score = binScores.compost + binScores.recycle + binScores.landfill;
+    score = binScores.wet + binScores.dry + binScores.hazard + binScores.reject + binScores.ewaste;
     updateBinScores();
     resetBinFill(choice);
     const wrongBox = boxes.find((b) => b.dataset.color === choice);
@@ -344,7 +419,15 @@ const handleChoice = (choice) => {
       void wrongBox.offsetWidth;
       wrongBox.classList.add("shake");
     }
-    if (audioReady) soundWrong();
+    if (audioReady) {
+      if (memeMode && consecutiveWrong >= 2) {
+        doubleWrongSound.currentTime = 0;
+        doubleWrongSound.play().catch(() => {});
+        consecutiveWrong = 0;
+      } else {
+        soundWrong();
+      }
+    }
     showToast("Wrong bin! Score reset", false);
   }
   round += 1;
@@ -370,7 +453,17 @@ const stopGame = () => {
   saveHistory(history);
   updateStats();
   renderHistory();
-  if (audioReady) soundEnd();
+  if (audioReady) {
+    const maxPossible = practiceAttempts * 10;
+    const percent = maxPossible > 0 ? (score / maxPossible) * 100 : 0;
+    if (percent < 90 && practiceEndSounds.length > 0) {
+      const pick = practiceEndSounds[Math.floor(Math.random() * practiceEndSounds.length)];
+      pick.currentTime = 0;
+      pick.play().catch(() => {});
+    } else {
+      soundEnd();
+    }
+  }
   if (practiceScoreEl) practiceScoreEl.textContent = String(score);
   if (learningPointEl) learningPointEl.textContent = randomLearningPoint();
   if (practiceEndModal) practiceEndModal.classList.remove("hidden");
@@ -404,12 +497,18 @@ const startGame = () => {
   audioReady = false;
   window.clearInterval(timerId);
   timerId = null;
-  binFill.compost = 0;
-  binFill.recycle = 0;
-  binFill.landfill = 0;
-  binScores.compost = 0;
-  binScores.recycle = 0;
-  binScores.landfill = 0;
+  consecutiveWrong = 0;
+  practiceAttempts = 0;
+  binFill.wet = 0;
+  binFill.dry = 0;
+  binFill.hazard = 0;
+  binFill.reject = 0;
+  binFill.ewaste = 0;
+  binScores.wet = 0;
+  binScores.dry = 0;
+  binScores.hazard = 0;
+  binScores.reject = 0;
+  binScores.ewaste = 0;
   boxes.forEach((box) => {
     box.style.setProperty("--fill", "0%");
     const stack = box.querySelector(".trash-stack");
@@ -419,7 +518,12 @@ const startGame = () => {
   if (shuffleBtn) shuffleBtn.classList.remove("hidden");
   if (styleToggleBtn) styleToggleBtn.classList.remove("hidden");
   if (changeProfileBtn) changeProfileBtn.classList.remove("hidden");
+  if (backToTestBtn) backToTestBtn.classList.remove("hidden");
   if (resetBtn) resetBtn.classList.remove("hidden");
+  if (stage) {
+    stage.classList.remove("test-mode");
+    stage.classList.add("practice-mode");
+  }
   updateStats();
   updateBinScores();
   setItem(randomItem());
@@ -433,26 +537,35 @@ const startTest = () => {
   window.clearInterval(timerId);
   timerId = null;
   testIndex = 0;
+  testItems = shuffledItems();
   testCorrect = 0;
   score = 0;
   streak = 0;
   round = 1;
-  binScores.compost = 0;
-  binScores.recycle = 0;
-  binScores.landfill = 0;
+  binScores.wet = 0;
+  binScores.dry = 0;
+  binScores.hazard = 0;
+  binScores.reject = 0;
+  binScores.ewaste = 0;
   updateBinScores();
   if (timeStat) timeStat.classList.add("hidden");
   if (shuffleBtn) shuffleBtn.classList.add("hidden");
   if (styleToggleBtn) styleToggleBtn.classList.add("hidden");
   if (changeProfileBtn) changeProfileBtn.classList.remove("hidden");
+  if (backToTestBtn) backToTestBtn.classList.add("hidden");
   if (resetBtn) resetBtn.classList.add("hidden");
+  if (stage) {
+    stage.classList.remove("practice-mode");
+    stage.classList.add("test-mode");
+  }
   updateStats();
-  setItem(items[testIndex]);
+  setItem(testItems[testIndex]);
 };
 
 const endTest = () => {
   gameActive = false;
-  const percent = Math.round((testCorrect / items.length) * 100);
+  const total = testItems.length || items.length;
+  const percent = Math.round((testCorrect / total) * 100);
   if (civicScoreEl) {
     civicScoreEl.textContent = percent + " / 100";
   }
@@ -542,12 +655,28 @@ if (changeProfileBtn) {
   });
 }
 
+if (backToTestBtn) {
+  backToTestBtn.addEventListener("click", () => {
+    startTest();
+  });
+}
+
+if (memeModeBtn) {
+  memeModeBtn.textContent = "Meme Mode: On";
+  memeModeBtn.addEventListener("click", () => {
+    memeMode = !memeMode;
+    memeModeBtn.textContent = memeMode ? "Meme Mode: On" : "Meme Mode: Off";
+  });
+}
+
 boxes.forEach((box) => {
   box.addEventListener("click", () => handleChoice(box.dataset.color));
 });
 
 window.addEventListener("keydown", (event) => {
-  if (event.key === "c") handleChoice("compost");
-  if (event.key === "r") handleChoice("recycle");
-  if (event.key === "l") handleChoice("landfill");
+  if (event.key === "w") handleChoice("wet");
+  if (event.key === "d") handleChoice("dry");
+  if (event.key === "h") handleChoice("hazard");
+  if (event.key === "b") handleChoice("reject");
+  if (event.key === "e") handleChoice("ewaste");
 });
