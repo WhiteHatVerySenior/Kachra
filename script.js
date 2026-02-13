@@ -328,8 +328,13 @@ const playTone = (frequency, duration, type = "sine") => {
 };
 
 const soundCorrect = () => playTone(880, 0.12, "triangle");
-const wrongSound = new Audio("assets/sfx/abe-sale-harmonium-cut.mp3");
-wrongSound.preload = "auto";
+const wrongSounds = [
+  new Audio("assets/sfx/abe-sale-harmonium-cut.mp3"),
+  new Audio("assets/sfx/aayein-baigan-finalCut.mp3"),
+];
+wrongSounds.forEach((audio) => {
+  audio.preload = "auto";
+});
 const practiceEndSounds = [
   new Audio("assets/sfx/khatam-ho-gaya-bhaiya-matter-puneet-superstar-audio-meme.mp3"),
   new Audio("assets/sfx/7-crore-audio-meme-download.mp3"),
@@ -341,8 +346,9 @@ const doubleWrongSound = new Audio("assets/sfx/yaaa-puneet-superstar-indian-meme
 doubleWrongSound.preload = "auto";
 const soundWrong = () => {
   if (memeMode) {
-    wrongSound.currentTime = 0;
-    wrongSound.play().catch(() => {});
+    const pick = wrongSounds[Math.floor(Math.random() * wrongSounds.length)];
+    pick.currentTime = 0;
+    pick.play().catch(() => {});
   } else {
     playTone(220, 0.2, "sawtooth");
   }
