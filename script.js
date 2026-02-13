@@ -64,6 +64,11 @@ const itemCard = document.getElementById("itemCard");
 const itemOrb = document.getElementById("itemOrb");
 const itemColor = document.getElementById("itemColor");
 const itemCounter = document.getElementById("itemCounter");
+const itemTimer = document.getElementById("itemTimer");
+const practiceScoreRow = document.getElementById("practiceScoreRow");
+const practiceScoreNow = document.getElementById("practiceScoreNow");
+const practiceScoreHigh = document.getElementById("practiceScoreHigh");
+let practiceHighRemote = 0;
 const scoreEl = document.getElementById("score");
 const streakEl = document.getElementById("streak");
 const roundEl = document.getElementById("round");
@@ -71,6 +76,7 @@ const timeEl = document.getElementById("timeLeft");
 const highScoreEl = document.getElementById("highScore");
 const historyList = document.getElementById("historyList");
 const timeStat = document.getElementById("timeStat");
+const scoreboard = document.querySelector(".scoreboard");
 const toast = document.getElementById("toast");
 const shuffleBtn = document.getElementById("shuffle");
 const styleToggleBtn = document.getElementById("styleToggle");
@@ -138,9 +144,6 @@ const profileModal = document.getElementById("profileModal");
 const profileForm = document.getElementById("profileForm");
 const playerName = document.getElementById("playerName");
 const playerAge = document.getElementById("playerAge");
-const playerGender = document.getElementById("playerGender");
-const playerCity = document.getElementById("playerCity");
-const playerLanguage = document.getElementById("playerLanguage");
 const endModal = document.getElementById("endModal");
 const civicScoreEl = document.getElementById("civicScore");
 const startPracticeBtn = document.getElementById("startPractice");
@@ -225,6 +228,15 @@ const setItem = (item) => {
       itemCounter.textContent = "";
     }
   }
+  if (itemTimer) {
+    if (mode === "game") {
+      itemTimer.style.display = "block";
+      itemTimer.textContent = `${timeLeft}s`;
+    } else {
+      itemTimer.style.display = "none";
+      itemTimer.textContent = "";
+    }
+  }
   itemCard.classList.remove("pop");
   void itemCard.offsetWidth;
   itemCard.classList.add("pop");
@@ -238,7 +250,19 @@ const updateStats = () => {
   streakEl.textContent = streak;
   roundEl.textContent = round;
   timeEl.textContent = mode === "game" ? timeLeft : "--";
+  if (itemTimer) {
+    itemTimer.textContent = mode === "game" ? `${timeLeft}s` : "--";
+  }
   highScoreEl.textContent = highScore;
+  if (practiceScoreRow) {
+    if (mode === "game") {
+      practiceScoreRow.style.display = "flex";
+      if (practiceScoreNow) practiceScoreNow.textContent = `Score: ${score}`;
+      if (practiceScoreHigh) practiceScoreHigh.textContent = `High: ${practiceHighRemote}`;
+    } else {
+      practiceScoreRow.style.display = "none";
+    }
+  }
 };
 
 const updateBinScores = () => {
@@ -498,9 +522,6 @@ const stopGame = () => {
       attempts: practiceAttempts,
       name: currentProfile?.name || "",
       age: currentProfile?.age || "",
-      gender: currentProfile?.gender || "",
-      city: currentProfile?.city || "",
-      language: currentProfile?.language || "",
     })
       .then(() => {
         showToast("Score saved", true);
@@ -567,15 +588,27 @@ const startGame = () => {
   if (changeProfileBtn) changeProfileBtn.classList.remove("hidden");
   if (backToTestBtn) backToTestBtn.classList.remove("hidden");
   if (resetBtn) resetBtn.classList.remove("hidden");
+  if (scoreboard) scoreboard.classList.add("hidden");
   if (stage) {
     stage.classList.remove("test-mode");
     stage.classList.add("practice-mode");
   }
+  if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=practice";
   updateStats();
   updateBinScores();
   setItem(randomItem());
   if (itemCounter) itemCounter.textContent = "";
+  practiceHighRemote = 0;
+  if (practiceScoreHigh) practiceScoreHigh.textContent = `High: ${practiceHighRemote}`;
+  if (window.firebaseGetPracticeHigh) {
+    window.firebaseGetPracticeHigh()
+      .then((value) => {
+        practiceHighRemote = value;
+        if (practiceScoreHigh) practiceScoreHigh.textContent = `High: ${practiceHighRemote}`;
+      })
+      .catch(() => {});
+  }
 };
 
 const startTest = () => {
@@ -604,10 +637,12 @@ const startTest = () => {
   if (changeProfileBtn) changeProfileBtn.classList.remove("hidden");
   if (backToTestBtn) backToTestBtn.classList.add("hidden");
   if (resetBtn) resetBtn.classList.add("hidden");
+  if (scoreboard) scoreboard.classList.add("hidden");
   if (stage) {
     stage.classList.remove("practice-mode");
     stage.classList.add("test-mode");
   }
+  if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=test";
   updateStats();
   setItem(testItems[testIndex]);
@@ -626,7 +661,9 @@ const endTest = () => {
     resultLine.textContent =
       percent < 15
         ? "Somalian Pirates have better Civic Sense than you. Your score"
-        : "Great effort! Your score:";
+        : percent < 30
+          ? "A retard monkey would have scored better than you. Your \"Civic\" Sense Score:"
+          : "Great effort! Your score:";
   }
   if (shareScoreBtn) {
     shareScoreBtn.textContent =
@@ -640,9 +677,6 @@ const endTest = () => {
       score: percent,
       name: currentProfile?.name || "",
       age: currentProfile?.age || "",
-      gender: currentProfile?.gender || "",
-      city: currentProfile?.city || "",
-      language: currentProfile?.language || "",
     })
       .then(() => {
         showToast("Score saved", true);
@@ -676,6 +710,7 @@ if (returnMode === "practice") {
   startTest();
 } else {
   gameActive = false;
+  if (stage) stage.classList.add("profile-active");
   if (profileModal) profileModal.classList.remove("hidden");
 }
 
@@ -685,21 +720,20 @@ if (profileForm) {
     const profileData = {
       name: playerName.value.trim(),
       age: playerAge.value,
-      gender: playerGender.value,
-      city: playerCity.value.trim(),
-      language: playerLanguage.value,
+      gender: "",
+      city: "",
+      language: "",
     };
     if (
       !profileData.name ||
       !profileData.age ||
-      !profileData.gender ||
-      !profileData.city ||
-      !profileData.language
+      !profileData.age
     )
       return;
     saveProfile(profileData);
     currentProfile = profileData;
     if (profileModal) profileModal.classList.add("hidden");
+    if (stage) stage.classList.remove("profile-active");
     alert("Are you ready to know your Civic Sense Score?");
     startTest();
   });
@@ -736,6 +770,7 @@ if (changeProfileBtn) {
   changeProfileBtn.addEventListener("click", () => {
     localStorage.removeItem(PROFILE_KEY);
     currentProfile = null;
+    if (stage) stage.classList.add("profile-active");
     if (profileModal) profileModal.classList.remove("hidden");
     gameActive = false;
   });

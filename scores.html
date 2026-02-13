@@ -16,7 +16,7 @@
     <main class="scores-page">
       <header class="scores-header">
         <div>
-          <span class="kicker">Prototype 0.4.5</span>
+          <span class="kicker">Prototype 0.4.6</span>
           <h1>Civic Sense Scores</h1>
           <p>Live scores from Firestore.</p>
         </div>
@@ -49,9 +49,6 @@
                 <th>Time</th>
                 <th>Name</th>
                 <th>Age</th>
-                <th>Gender</th>
-                <th>City</th>
-                <th>Language</th>
                 <th>Mode</th>
                 <th>Score</th>
                 <th>Attempts</th>
@@ -117,9 +114,6 @@
             <td>${formatTime(data.createdAt)}</td>
             <td>${data.name || ""}</td>
             <td>${data.age || ""}</td>
-            <td>${data.gender || ""}</td>
-            <td>${data.city || ""}</td>
-            <td>${data.language || ""}</td>
             <td>${data.mode || ""}</td>
             <td>${data.score ?? ""}</td>
             <td>${data.attempts ?? ""}</td>

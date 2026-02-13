@@ -16,7 +16,7 @@
     <main class="stage">
       <header class="hud">
         <div class="title">
-          <span class="kicker">Prototype 0.4.5</span>
+          <span class="kicker">Prototype 0.4.6</span>
           <h1>Waste Sort Sprint</h1>
           <p>Match each item to the correct bin. Misses ruins the entire batch of garbage collected.</p>
         </div>
@@ -51,10 +51,15 @@
       <section class="arena">
         <div class="item-card" id="itemCard">
           <div class="item-orb" id="itemOrb"></div>
+          <span id="itemTimer" class="item-timer">60s</span>
           <div class="item-meta">
             <span class="item-label">ITEM</span>
             <span id="itemColor" class="item-color">BANANA PEEL</span>
             <span id="itemCounter" class="item-counter">1 / 1</span>
+            <div id="practiceScoreRow" class="practice-score-row">
+              <span id="practiceScoreNow" class="practice-score">Score: 0</span>
+              <span id="practiceScoreHigh" class="practice-score">High: 0</span>
+            </div>
           </div>
         </div>
 
@@ -181,33 +186,6 @@
               <option value="95-100">95-100</option>
             </select>
           </label>
-          <label class="field">
-            <span>Gender</span>
-            <select id="playerGender" required>
-              <option value="" disabled selected>Select</option>
-              <option value="Female">Female</option>
-              <option value="Male">Male</option>
-              <option value="Non-binary">Non-binary</option>
-              <option value="Prefer not to say">Prefer not to say</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>City</span>
-            <input id="playerCity" type="text" required placeholder="Your city" />
-          </label>
-          <label class="field">
-            <span>Language</span>
-            <select id="playerLanguage" required>
-              <option value="" disabled selected>Select</option>
-              <option value="English">English</option>
-              <option value="Hinglish">Hinglish</option>
-              <option value="Hindi">Hindi</option>
-              <option value="Bengali">Bengali</option>
-              <option value="Tamil">Tamil</option>
-              <option value="Gujarati">Gujarati</option>
-              <option value="Kannada">Kannada</option>
-            </select>
-          </label>
           <button type="submit" class="solid wide">Start</button>
         </form>
       </div>
@@ -244,7 +222,17 @@
     <!-- Added DataBase FireStore -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-      import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+        query,
+        where,
+        orderBy,
+        limit,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyDlktCZaQxZ1tL4dJKnGwDkJgTHAVdPfHA",
@@ -264,6 +252,19 @@
           ...payload,
           createdAt: serverTimestamp(),
         });
+      };
+
+      window.firebaseGetPracticeHigh = async () => {
+        const q = query(
+          collection(db, "scores"),
+          where("mode", "==", "practice"),
+          orderBy("score", "desc"),
+          limit(1)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) return 0;
+        const data = snap.docs[0].data();
+        return typeof data.score === "number" ? data.score : Number(data.score || 0);
       };
     </script>
 

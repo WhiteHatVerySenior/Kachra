@@ -202,6 +202,17 @@ body {
   align-self: flex-start;
 }
 
+.scoreboard.hidden {
+  display: none;
+}
+
+.profile-active .scoreboard,
+.profile-active .arena,
+.profile-active .controls,
+.profile-active .history {
+  visibility: hidden;
+}
+
 .history {
   min-width: 180px;
   align-self: flex-start;
@@ -209,9 +220,10 @@ body {
   border-radius: 16px;
   padding: 12px 14px;
   border: 1px solid rgba(16, 20, 21, 0.08);
-  margin-top: -28px;
+  margin-top: 257px;
   position: relative;
   top: -160px;
+  display: none;
 }
 
 .history .label {
@@ -264,7 +276,7 @@ body {
 .arena {
   display: grid;
   gap: 28px;
-  margin-top: 0;
+  margin-top: 32px;
   position: relative;
   z-index: 2;
   min-height: 60vh;
@@ -311,6 +323,13 @@ body {
   gap: 8px;
 }
 
+.item-timer {
+  font-family: "Space Mono", monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
 .item-label {
   font-size: 0.75rem;
   letter-spacing: 0.35em;
@@ -325,6 +344,20 @@ body {
 }
 
 .item-counter {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+}
+
+.practice-score-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.practice-score {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   color: var(--muted);
