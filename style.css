@@ -225,6 +225,12 @@ body {
   max-width: 360px;
 }
 
+.quick-start {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
 .scoreboard {
   display: grid;
   grid-auto-flow: column;
@@ -404,6 +410,34 @@ body {
   font-family: "Space Mono", monospace;
 }
 
+.level-lives {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+}
+
+.level-mode .box.ewaste {
+  display: none;
+}
+
+.level-round-1 .box.black {
+  display: none;
+}
+
+.level-round-1 .box.red {
+  display: none;
+}
+
+.level-round-2 .box.green,
+.level-round-2 .box.black {
+  display: none;
+}
+
+.level-round-3 .box.green,
+.level-round-3 .box.red {
+  display: none;
+}
 .boxes {
   display: flex;
   justify-content: center;
@@ -759,6 +793,11 @@ button.solid {
   text-align: center;
   font-size: 0.85rem;
   color: var(--muted);
+}
+
+.test-actions {
+  display: grid;
+  gap: 8px;
 }
 
 .field {

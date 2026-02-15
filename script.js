@@ -68,6 +68,7 @@ const itemTimer = document.getElementById("itemTimer");
 const practiceScoreRow = document.getElementById("practiceScoreRow");
 const practiceScoreNow = document.getElementById("practiceScoreNow");
 const practiceScoreHigh = document.getElementById("practiceScoreHigh");
+const levelLivesEl = document.getElementById("levelLives");
 let practiceHighRemote = 0;
 const scoreEl = document.getElementById("score");
 const streakEl = document.getElementById("streak");
@@ -123,6 +124,11 @@ const binScores = {
 let lastLearningIndex = -1;
 let practiceAttempts = 0;
 let consecutiveWrong = 0;
+let levelIndex = 0;
+let levelLives = 5;
+let levelTimerId = null;
+let levelTimeLeft = 10;
+let levelItems = [];
 
 const HIGH_SCORE_KEY = "colorSortHighScore";
 const HISTORY_KEY = "colorSortHistory";
@@ -196,8 +202,8 @@ const saveProfile = (profile) => {
 let currentProfile = loadProfile();
 
 const randomItem = () => items[Math.floor(Math.random() * items.length)];
-const shuffledItems = () => {
-  const copy = items.slice();
+const shuffledItems = (list = items) => {
+  const copy = list.slice();
   for (let i = copy.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [copy[i], copy[j]] = [copy[j], copy[i]];
@@ -205,6 +211,29 @@ const shuffledItems = () => {
   return copy;
 };
 let testItems = [];
+let levelRound = 1;
+
+const levelRuleItem = (item, round) => {
+  if ((round === 1 || round === 2) && item.bin === "reject") return { ...item, bin: "dry" };
+  return item;
+};
+
+const levelPool = (round) => {
+  if (round === 1) {
+    return items
+      .filter((item) => item.bin === "wet" || item.bin === "dry" || item.bin === "reject")
+      .map((item) => levelRuleItem(item, round));
+  }
+  if (round === 2) {
+    return items
+      .filter((item) => item.bin === "dry" || item.bin === "hazard" || item.bin === "reject")
+      .map((item) => levelRuleItem(item, round));
+  }
+  if (round === 3) {
+    return items.filter((item) => item.bin === "dry" || item.bin === "reject");
+  }
+  return [];
+};
 
 const setItem = (item) => {
   currentItem = item;
@@ -252,7 +281,9 @@ const updateStats = () => {
   roundEl.textContent = round;
   timeEl.textContent = mode === "game" ? timeLeft : "--";
   if (itemTimer) {
-    itemTimer.textContent = mode === "game" ? `${timeLeft}s` : "--";
+    if (mode === "game") itemTimer.textContent = `${timeLeft}s`;
+    else if (mode === "level") itemTimer.textContent = `${levelTimeLeft}s`;
+    else itemTimer.textContent = "";
   }
   highScoreEl.textContent = highScore;
   if (practiceScoreRow) {
@@ -264,6 +295,10 @@ const updateStats = () => {
     } else {
       practiceScoreRow.style.display = "none";
     }
+  }
+  if (levelLivesEl) {
+    levelLivesEl.style.display = mode === "level" ? "block" : "none";
+    if (mode === "level") levelLivesEl.textContent = `Lives: ${levelLives}`;
   }
 };
 
@@ -377,6 +412,12 @@ const practiceEndSounds = [
 practiceEndSounds.forEach((audio) => {
   audio.preload = "auto";
 });
+const levelClap = new Audio("assets/sfx/level-clap.mp3");
+const levelClap2 = new Audio("assets/sfx/level-2.mp3");
+const levelClap3 = new Audio("assets/sfx/level-3.mp3");
+levelClap.preload = "auto";
+levelClap2.preload = "auto";
+levelClap3.preload = "auto";
 const doubleWrongSound = new Audio("assets/sfx/yaaa-puneet-superstar-indian-meme.mp3");
 doubleWrongSound.preload = "auto";
 const soundWrong = () => {
@@ -421,6 +462,12 @@ const soundTick = () => {
 
 const handleChoice = (choice) => {
   if (!gameActive) return;
+  if (mode === "level") {
+    if (levelTimerId) {
+      window.clearInterval(levelTimerId);
+      levelTimerId = null;
+    }
+  }
   if (memeMode && !doubleWrongSound.paused) {
     doubleWrongSound.pause();
     doubleWrongSound.currentTime = 0;
@@ -439,6 +486,19 @@ const handleChoice = (choice) => {
     }
     updateStats();
     setItem(testItems[testIndex]);
+    return;
+  }
+  if (mode === "level") {
+    const correct = choice === currentItem.bin;
+    if (correct) {
+      score += 10;
+      if (audioReady) soundCorrect();
+    } else {
+      levelLives -= 1;
+      if (audioReady) soundWrong();
+    }
+    updateStats();
+    nextLevelItem();
     return;
   }
 
@@ -595,6 +655,11 @@ const startGame = () => {
     stage.classList.remove("test-mode");
     stage.classList.add("practice-mode");
   }
+  if (stage) {
+    stage.classList.remove("level-mode");
+    stage.classList.remove("level-round-1");
+    stage.classList.remove("level-round-2");
+  }
   if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=practice";
   if (geeksLink) geeksLink.href = "geeks.html?mode=practice";
@@ -621,6 +686,129 @@ const startGame = () => {
   }
 };
 
+// RULES: Level mode uses only Wet/Dry/Reject items; Reject is treated as Dry.
+// 10 seconds per item, 3 lives total. Timeout counts as 1 life lost.
+const startLevelPractice = () => {
+  mode = "level";
+  gameActive = true;
+  audioReady = true;
+  levelRound = 1;
+  levelLives = 5;
+  levelIndex = 0;
+  score = 0;
+  levelItems = shuffledItems(levelPool(levelRound));
+  if (stage) {
+    stage.classList.remove("test-mode");
+    stage.classList.add("practice-mode");
+    stage.classList.add("level-mode");
+    stage.classList.add("level-round-1");
+    stage.classList.remove("level-round-2");
+    stage.classList.remove("level-round-3");
+  }
+  updateStats();
+  nextLevelItem();
+};
+
+const nextLevelItem = () => {
+  if (levelLives <= 0 || levelIndex >= levelItems.length) {
+    if (levelLives <= 0) {
+      endLevelPractice();
+      return;
+    }
+    if (levelRound === 1) {
+      levelRound = 2;
+      levelLives = 5;
+      levelIndex = 0;
+      levelItems = shuffledItems(levelPool(levelRound));
+      if (levelItems.length === 0) {
+        endLevelPractice();
+        return;
+      }
+      if (stage) {
+        stage.classList.remove("level-round-1");
+        stage.classList.add("level-round-2");
+        stage.classList.remove("level-round-3");
+      }
+      if (audioReady) {
+        levelClap.currentTime = 0;
+        levelClap.play().catch(() => {});
+      }
+      if (levelTimerId) {
+        window.clearInterval(levelTimerId);
+        levelTimerId = null;
+      }
+      setTimeout(() => {
+        updateStats();
+        nextLevelItem();
+      }, 2000);
+      return;
+    } else if (levelRound === 2) {
+      levelRound = 3;
+      levelLives = 5;
+      levelIndex = 0;
+      levelItems = shuffledItems(levelPool(levelRound));
+      if (levelItems.length === 0) {
+        endLevelPractice();
+        return;
+      }
+      if (stage) {
+        stage.classList.remove("level-round-2");
+        stage.classList.add("level-round-3");
+      }
+      if (audioReady) {
+        levelClap2.currentTime = 0;
+        levelClap2.play().catch(() => {});
+      }
+      if (levelTimerId) {
+        window.clearInterval(levelTimerId);
+        levelTimerId = null;
+      }
+      setTimeout(() => {
+        updateStats();
+        nextLevelItem();
+      }, 2000);
+      return;
+    } else {
+      if (audioReady) {
+        levelClap3.currentTime = 0;
+        levelClap3.play().catch(() => {});
+      }
+      setTimeout(() => {
+        endLevelPractice();
+      }, 2000);
+      return;
+    }
+  }
+  setItem(levelItems[levelIndex]);
+  levelIndex += 1;
+  levelTimeLeft = 10;
+  updateStats();
+  if (levelTimerId) window.clearInterval(levelTimerId);
+  levelTimerId = window.setInterval(() => {
+    levelTimeLeft -= 1;
+    if (levelTimeLeft <= 0) {
+      levelTimeLeft = 0;
+      levelLives -= 1;
+      if (audioReady) soundWrong();
+      updateStats();
+      window.clearInterval(levelTimerId);
+      levelTimerId = null;
+      nextLevelItem();
+    } else {
+      updateStats();
+    }
+  }, 1000);
+};
+
+const endLevelPractice = () => {
+  if (levelTimerId) {
+    window.clearInterval(levelTimerId);
+    levelTimerId = null;
+  }
+  if (practiceScoreEl) practiceScoreEl.textContent = String(score);
+  if (learningPointEl) learningPointEl.textContent = randomLearningPoint();
+  if (practiceEndModal) practiceEndModal.classList.remove("hidden");
+};
 const startTest = () => {
   mode = "test";
   gameActive = true;
@@ -651,6 +839,11 @@ const startTest = () => {
   if (stage) {
     stage.classList.remove("practice-mode");
     stage.classList.add("test-mode");
+  }
+  if (stage) {
+    stage.classList.remove("level-mode");
+    stage.classList.remove("level-round-1");
+    stage.classList.remove("level-round-2");
   }
   if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=test";
@@ -757,6 +950,32 @@ if (startPracticeBtn) {
   });
 }
 
+const startLevelPracticeBtn = document.getElementById("startLevelPractice");
+const quickPracticeBtn = document.getElementById("quickPractice");
+const quickLevelPracticeBtn = document.getElementById("quickLevelPractice");
+if (startLevelPracticeBtn) {
+  startLevelPracticeBtn.addEventListener("click", () => {
+    if (endModal) endModal.classList.add("hidden");
+    startLevelPractice();
+  });
+}
+
+if (quickPracticeBtn) {
+  quickPracticeBtn.addEventListener("click", () => {
+    if (profileModal) profileModal.classList.add("hidden");
+    if (stage) stage.classList.remove("profile-active");
+    startGame();
+  });
+}
+
+if (quickLevelPracticeBtn) {
+  quickLevelPracticeBtn.addEventListener("click", () => {
+    if (profileModal) profileModal.classList.add("hidden");
+    if (stage) stage.classList.remove("profile-active");
+    startLevelPractice();
+  });
+}
+
 if (practiceAgainBtn) {
   practiceAgainBtn.addEventListener("click", () => {
     if (practiceEndModal) practiceEndModal.classList.add("hidden");
@@ -806,6 +1025,22 @@ boxes.forEach((box) => {
 });
 
 window.addEventListener("keydown", (event) => {
+  if (mode === "level") {
+    if (levelRound === 1) {
+      if (event.key.toLowerCase() === "z") handleChoice("wet");
+      if (event.key.toLowerCase() === "x") handleChoice("dry");
+    } else if (levelRound === 2) {
+      if (event.key.toLowerCase() === "z") handleChoice("dry");
+      if (event.key.toLowerCase() === "x") handleChoice("hazard");
+    } else if (levelRound === 3) {
+      if (event.key.toLowerCase() === "z") handleChoice("dry");
+      if (event.key.toLowerCase() === "x") handleChoice("reject");
+    }
+  }
+  if (event.key === "ArrowLeft") handleChoice("wet");
+  if (event.key === "ArrowUp") handleChoice("dry");
+  if (event.key === "ArrowRight") handleChoice("hazard");
+  if (event.key === "ArrowDown") handleChoice("reject");
   if (event.key === "w") handleChoice("wet");
   if (event.key === "d") handleChoice("dry");
   if (event.key === "h") handleChoice("hazard");
