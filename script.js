@@ -298,7 +298,7 @@ const updateStats = () => {
   }
   if (levelLivesEl) {
     levelLivesEl.style.display = mode === "level" ? "block" : "none";
-    if (mode === "level") levelLivesEl.textContent = `Lives: ${levelLives}`;
+    if (mode === "level") levelLivesEl.textContent = `Lives: ${levelLives} || Time: ${levelTimeLeft}s`;
   }
 };
 
@@ -659,6 +659,7 @@ const startGame = () => {
     stage.classList.remove("level-mode");
     stage.classList.remove("level-round-1");
     stage.classList.remove("level-round-2");
+    stage.classList.remove("level-round-3");
   }
   if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=practice";
@@ -844,6 +845,7 @@ const startTest = () => {
     stage.classList.remove("level-mode");
     stage.classList.remove("level-round-1");
     stage.classList.remove("level-round-2");
+    stage.classList.remove("level-round-3");
   }
   if (stage) stage.classList.remove("profile-active");
   if (scoresLink) scoresLink.href = "scores.html?mode=test";
